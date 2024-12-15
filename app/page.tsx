@@ -4,10 +4,9 @@ import { useEffect, useState } from "react";
 
 export default function Home() {
   const [dd, setDd] = useState<chartType>();
+  const [bb, setb] = useState<chartType>();
   useEffect(() => {
-    async function fetchData() {
-      const res = await fetch("/api/history");
-      console.log(res);
+    async function fetchEarn() {
       try {
         const res = await fetch("/api/earnings");
         if (!res.ok) {
@@ -19,8 +18,20 @@ export default function Home() {
         // setError(err.message);
       }
     }
-
-    fetchData();
+    async function fetchHis() {
+      try {
+        const res = await fetch("/api/history");
+        if (!res.ok) {
+          throw new Error("Failed to fetch earnings data");
+        }
+        const result = await res.json();
+        setb(result);
+      } catch (err) {
+        // setError(err.message);
+      }
+    }
+    fetchHis();
+    fetchEarn();
   }, []);
   return (
     <div className="flex-grow overflow-y-auto p-4 w-full max-w-md bg-white shadow-lg">
