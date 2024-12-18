@@ -28,7 +28,7 @@ export default function RootLayout({
 }) {
   return (
     <html>
-      <body className="flex justify-center items-center min-h-screen bg-gray-100">
+      <body className="dark flex justify-center items-center min-h-screen bg-slate-950 text-white">
         {children}
         {/* Fixed Footer */}
         <div className="fixed bottom-0 w-full max-w-md bg-blue-600 text-white text-center p-4">

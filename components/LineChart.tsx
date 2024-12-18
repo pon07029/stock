@@ -28,6 +28,7 @@ export type chartType = {
   ave: number;
   labels: string[];
   data: number[];
+  // title: string;///
 };
 
 const PointStyleChart = ({ chartData }: { chartData: chartType }) => {
@@ -50,7 +51,8 @@ const PointStyleChart = ({ chartData }: { chartData: chartType }) => {
     plugins: {
       title: {
         display: false,
-        text: "Point Style Chart Example",
+        // text: chartData.title,
+        color: "white",
       },
       legend: {
         display: false,
@@ -61,7 +63,7 @@ const PointStyleChart = ({ chartData }: { chartData: chartType }) => {
             type: "line",
             scaleID: "y", // y축 기준
             value: chartData.ave, // y값 20 위치에 선 그리기
-            borderColor: "red",
+            borderColor: "blue",
             borderWidth: 2,
             label: {
               display: true,

@@ -1,5 +1,6 @@
 "use client";
 import LineChart, { chartType } from "@/components/LineChart";
+import StockBox from "@/components/StockBox";
 import { useEffect, useState } from "react";
 
 export default function Home() {
@@ -34,18 +35,16 @@ export default function Home() {
     fetchEarn();
   }, []);
   return (
-    <div className="flex-grow overflow-y-auto p-4 w-full max-w-md bg-white shadow-lg">
+    <div className="flex-grow overflow-y-auto p-4 w-full max-w-md bg-gradient-to-r from-slate-950 to-slate-900 shadow-lg">
       <h1 className="text-xl font-bold mb-4">Scrollable Content</h1>
       <p>
         This is the main body content. Add more text or elements here to see the
         scroll behavior.
       </p>
       {dd && <LineChart chartData={dd} />}
-      <div className="mt-4 space-y-4">
-        {Array.from({ length: 30 }, (_, i) => (
-          <p key={i} className="bg-white p-2 rounded shadow">
-            Example content line {i + 1}
-          </p>
+      <div className="mt-4 space-y-4 w-full">
+        {Array.from({ length: 10 }, (_, i) => (
+          <StockBox key={i} score={[1, 1, 1, 1]} />
         ))}
       </div>
     </div>
