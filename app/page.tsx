@@ -44,7 +44,7 @@ export default function Home() {
       {dd && <LineChart chartData={dd} />}
       <div className="mt-4 space-y-4 w-full">
         {Array.from({ length: 10 }, (_, i) => (
-          <StockBox key={i} score={[1, 1, 1, 1]} />
+          <StockBox key={i} score={[1, 1, 1, 1]} ticker={"GOOGL"} />
         ))}
       </div>
     </div>

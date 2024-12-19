@@ -37,7 +37,7 @@ function Page() {
 
   const getData = async () => {
     try {
-      const res = await fetch("/api/new?ticker=GOOGL");
+      const res = await fetch("/api/new?ticker=TSLA");
       if (!res.ok) {
         throw new Error("Failed to fetch earnings data");
       }

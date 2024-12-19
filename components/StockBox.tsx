@@ -9,10 +9,16 @@ import {
   TableRow,
   TableCell,
 } from "@nextui-org/table";
+import { redirect } from "next/navigation";
 
-function StockBox({ score }: { score: number[] }) {
+function StockBox({ score, ticker }: { score: number[], ticker:string }) {
+  const go = ()=>{
+    redirect(`/${ticker}`)
+  }
   return (
-    <Card isPressable className="w-full">
+    <Card isPressable
+    onPress={go}
+    className="w-full">
       <CardBody className="flex flex-row">
         <div className="mr-3 mt-1 ">
           <Avatar
