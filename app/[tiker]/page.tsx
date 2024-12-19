@@ -1,5 +1,7 @@
 "use client";
 import LineChart, { chartType } from "@/components/LineChart";
+import { calculateEPSGrowthScore, calculatePERBandScore } from "@/lib/math";
+import { getQuarter } from "@/lib/time";
 import { usePathname, useSearchParams } from "next/navigation";
 
 import React, { useEffect, useState } from "react";
@@ -46,8 +48,8 @@ function Page() {
         // chart1.labels.push(getQuarter(new Date(ele.date)));
         // chart2.labels.push(getQuarter(new Date(ele.date)));
         console.log(ele.date);
-        chart1.labels.push(ele.date.slice(0, 10));
-        chart2.labels.push(ele.date.slice(0, 10));
+        chart1.labels.push(getQuarter(ele.date));
+        chart2.labels.push(getQuarter(ele.date));
         chart1.data.push(ele.eps);
         chart2.data.push(ele.price / ele.eps / 4);
         console.log("2");
@@ -62,8 +64,8 @@ function Page() {
         ) /
         data.length /
         4;
-      chart1.labels.push("Est." + new Date().toISOString().slice(0, 10));
-      chart2.labels.push("Est." + new Date().toISOString().slice(0, 10));
+      chart1.labels.push("Est." + getQuarter(new Date()));
+      chart2.labels.push("Est." + getQuarter(new Date()));
       chart1.data.push(epsForward);
       chart2.data.push(price / epsForward / 4);
       return { ch1: chart1, ch2: chart2 };
@@ -99,22 +101,36 @@ function Page() {
   return (
     <div className="flex-grow overflow-y-auto scrollbar-hide p-4 w-full h-screen max-w-md bg-gradient-to-r from-slate-950 to-slate-900 shadow-lg pb-24">
       {detail && (
-        <div className="flex flex-row mb-10">
+        <div className="mb-10">
           <p className="flex-1 font-bold text-3xl">{detail?.name}</p>
           <p className="flex-1 font-bold text-3xl">
-            {detail?.price.toFixed(2)}
+            현재가 : {detail?.price.toFixed(2)}
           </p>
         </div>
       )}
       {ch1 && (
         <div className="mb-10">
-          <p className="flex-1 font-bold text-xl mb-4">eps</p>
+          <div className="flex flex-row justify-between">
+            <p className="flex-1 font-bold text-xl mb-4">eps</p>
+            <p className="flex-1 font-bold text-xl mb-4">
+              점수:{calculateEPSGrowthScore(ch1.data)}
+            </p>
+          </div>
           <LineChart chartData={ch1} />
         </div>
       )}
       {ch2 && (
         <div>
-          <p className="flex-1 font-bold text-xl mb-4">perBand</p>
+          <div className="flex flex-row justify-between">
+            <p className="flex-1 font-bold text-xl mb-4">perBand</p>
+            <p className="flex-1 font-bold text-xl mb-4">
+              점수:
+              {calculatePERBandScore(
+                ch2.data.slice(4)[0],
+                ch2.data.slice(0, 4)
+              )}
+            </p>
+          </div>
           <LineChart chartData={ch2} />
         </div>
       )}

@@ -9,11 +9,12 @@ import {
   TableRow,
   TableCell,
 } from "@nextui-org/table";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 function StockBox({ score, ticker }: { score: number[]; ticker: string }) {
+  const router = useRouter();
   const go = () => {
-    redirect(`/${ticker}`);
+    router.push("/" + ticker);
   };
   return (
     <Card isPressable onPress={go} className="w-full">

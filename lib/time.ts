@@ -1,4 +1,5 @@
-export function getQuarter(date: Date) {
+export function getQuarter(value: string | Date) {
+  const date = new Date(value);
   const year = date.getFullYear();
   const month = date.getMonth(); // 0: January, 1: February, ..., 11: December
 
