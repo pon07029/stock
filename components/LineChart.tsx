@@ -25,7 +25,7 @@ ChartJS.register(
 );
 
 export type chartType = {
-  ave: number;
+  ave?: number;
   labels: string[];
   data: number[];
   // title: string;///

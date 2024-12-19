@@ -20,33 +20,35 @@ const getPrice = async (ticker: string, date: Date) => {
   }
 };
 
-type newDataType ={
-  date: Date,
-  eps:number,
-  price:number,
-}
+type newDataType = {
+  date: Date;
+  eps: number;
+  price: number;
+};
 
-const addDb = async (ticker:string, newData:newDataType[]) => {
+const addDb = async (ticker: string, newData: newDataType[]) => {
   try {
-
     const result = await yahooFinance.quoteSummary(ticker, {
       modules: ["earnings"],
     });
     if (!result || !result.earnings || !result.earnings.earningsChart) {
-      return
+      return;
     }
 
-    const result2 = await yahooFinance.search(ticker, /* queryOptions */);
+    const result2 = await yahooFinance.quote(ticker);
     // console.log(result2)
-    const name = result2.quotes[0].longname
-    
-    const eps=result.earnings.earningsChart.currentQuarterEstimate
-    console.log(newData)
-    const [rows] = await db.query(
+    const name = result2.longName;
+    const price = result2.regularMarketPrice;
+    const today = new Date().toISOString().slice(0, 10);
+    const eps = result.earnings.earningsChart.currentQuarterEstimate;
+    console.log(newData);
+    await db.query(
       `INSERT INTO info VALUES("${ticker}", "${name}", "${eps}", "")`
     );
-
-    for (const ele of newData){
+    await db.query(
+      `INSERT INTO price (ticker, price, date) VALUES("${ticker}", "${price}", "${today}")`
+    );
+    for (const ele of newData) {
       await db.query(
         `INSERT INTO price (ticker, price, date) VALUES("${ticker}", "${ele.price}", "${ele.date}")`
       );
@@ -55,12 +57,12 @@ const addDb = async (ticker:string, newData:newDataType[]) => {
         `INSERT INTO eps (eps, date, ticker) VALUES("${ele.eps}", "${ele.date}","${ticker}")`
       );
     }
-    return true
+    return true;
   } catch (error) {
-    console.log("SQL ERROR", error)
-    return false
+    console.log("SQL ERROR", error);
+    return false;
   }
-}
+};
 
 export async function GET(request: any) {
   try {
@@ -73,13 +75,21 @@ export async function GET(request: any) {
       });
     }
 
+    const isIn = await db.query(`SELECT * FROM info WHERE ticker="${ticker}"`);
+    console.log(isIn);
+    if (isIn[0].length != 0) {
+      return new Response(JSON.stringify({ error: "alreday" }), {
+        status: 501,
+      });
+    }
+
     const result = await yahooFinance.quoteSummary(ticker, {
       modules: ["earningsHistory"],
     });
 
     // console.log(result.history);
     if (result && result.earningsHistory && result.earningsHistory.history[0]) {
-        console.log(result.earningsHistory.history);
+      console.log(result.earningsHistory.history);
       const q1 = await getPrice(
         ticker,
         result.earningsHistory.history[0].quarter
@@ -97,28 +107,38 @@ export async function GET(request: any) {
         result.earningsHistory.history[3].quarter
       );
 
-      const newData = [{
-        date:result.earningsHistory.history[0].quarter.toISOString().slice(0, 10),
-        eps:result.earningsHistory.history[0].epsActual,
-        price:q1
-      },
-      {
-        date:result.earningsHistory.history[1].quarter.toISOString().slice(0, 10),
-        eps:result.earningsHistory.history[1].epsActual,
-        price:q2
-      },
-      {
-        date:result.earningsHistory.history[2].quarter.toISOString().slice(0, 10),
-        eps:result.earningsHistory.history[2].epsActual,
-        price:q3
-      },
-      {
-        date:result.earningsHistory.history[3].quarter.toISOString().slice(0, 10),
-        eps:result.earningsHistory.history[3].epsActual,
-        price:q4
-      }]
-      if (await addDb(ticker, newData)){
-        return new Response(JSON.stringify({ success:true }));
+      const newData = [
+        {
+          date: result.earningsHistory.history[0].quarter
+            .toISOString()
+            .slice(0, 10),
+          eps: result.earningsHistory.history[0].epsActual,
+          price: q1,
+        },
+        {
+          date: result.earningsHistory.history[1].quarter
+            .toISOString()
+            .slice(0, 10),
+          eps: result.earningsHistory.history[1].epsActual,
+          price: q2,
+        },
+        {
+          date: result.earningsHistory.history[2].quarter
+            .toISOString()
+            .slice(0, 10),
+          eps: result.earningsHistory.history[2].epsActual,
+          price: q3,
+        },
+        {
+          date: result.earningsHistory.history[3].quarter
+            .toISOString()
+            .slice(0, 10),
+          eps: result.earningsHistory.history[3].epsActual,
+          price: q4,
+        },
+      ];
+      if (await addDb(ticker, newData)) {
+        return new Response(JSON.stringify({ success: true }));
       }
     }
     return new Response(JSON.stringify({ error: "No earnings data found" }), {

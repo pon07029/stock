@@ -11,14 +11,12 @@ import {
 } from "@nextui-org/table";
 import { redirect } from "next/navigation";
 
-function StockBox({ score, ticker }: { score: number[], ticker:string }) {
-  const go = ()=>{
-    redirect(`/${ticker}`)
-  }
+function StockBox({ score, ticker }: { score: number[]; ticker: string }) {
+  const go = () => {
+    redirect(`/${ticker}`);
+  };
   return (
-    <Card isPressable
-    onPress={go}
-    className="w-full">
+    <Card isPressable onPress={go} className="w-full">
       <CardBody className="flex flex-row">
         <div className="mr-3 mt-1 ">
           <Avatar
@@ -26,7 +24,7 @@ function StockBox({ score, ticker }: { score: number[], ticker:string }) {
             isBordered
             radius="sm"
             className="mb-1"
-            src="https://i.pravatar.cc/150?u=a04258a2462d826712d"
+            src={`https://storage.googleapis.com/iex/api/logos/${ticker}.png`}
           />
           <p className="font-bold text-green-400 text-center">9.2</p>
         </div>

@@ -2,37 +2,22 @@
 import LineChart, { chartType } from "@/components/LineChart";
 import StockBox from "@/components/StockBox";
 import { useEffect, useState } from "react";
+import { infoType } from "./[tiker]/page";
 
 export default function Home() {
-  const [dd, setDd] = useState<chartType>();
-  const [bb, setb] = useState<chartType>();
+  const [data, setData] = useState<infoType[]>();
   useEffect(() => {
-    async function fetchEarn() {
+    const getData = async () => {
       try {
-        const res = await fetch("/api/earnings");
-        if (!res.ok) {
-          throw new Error("Failed to fetch earnings data");
-        }
+        const res = await fetch("/api/summary");
         const result = await res.json();
-        setDd(result);
-      } catch (err) {
-        // setError(err.message);
-      }
-    }
-    async function fetchHis() {
-      try {
-        const res = await fetch("/api/history");
-        if (!res.ok) {
-          throw new Error("Failed to fetch earnings data");
+        console.log(result);
+        if (result.data) {
+          setData(result.data);
         }
-        const result = await res.json();
-        setb(result);
-      } catch (err) {
-        // setError(err.message);
-      }
-    }
-    fetchHis();
-    fetchEarn();
+      } catch (error) {}
+    };
+    getData();
   }, []);
   return (
     <div className="flex-grow overflow-y-auto p-4 w-full max-w-md bg-gradient-to-r from-slate-950 to-slate-900 shadow-lg">
@@ -41,11 +26,12 @@ export default function Home() {
         This is the main body content. Add more text or elements here to see the
         scroll behavior.
       </p>
-      {dd && <LineChart chartData={dd} />}
+
       <div className="mt-4 space-y-4 w-full">
-        {Array.from({ length: 10 }, (_, i) => (
-          <StockBox key={i} score={[1, 1, 1, 1]} ticker={"GOOGL"} />
-        ))}
+        {data &&
+          data.map((ele, i) => (
+            <StockBox key={i} score={[1, 1, 1, 1]} ticker={ele.ticker} />
+          ))}
       </div>
     </div>
   );
