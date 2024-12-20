@@ -107,12 +107,9 @@ export function calculatePERBandScore(
 }
 
 export function calculateTotalScore(
-  epsData: number[],
-  perValue: number,
-  perData: number[]
+  epsGrowthScore: number,
+  perBandScore: number
 ): number {
-  const epsGrowthScore = calculateEPSGrowthScore(epsData);
-  const perBandScore = calculatePERBandScore(perValue, perData);
 
   // Adjust weights based on industry characteristics
   const epsWeight = 0.6; // Growth-oriented industries

@@ -18,6 +18,8 @@ export type infoType = {
   price: number;
   image?: string;
   ticker: string;
+  epsScore:number;
+  perBandScore:number;
 };
 
 function Page() {

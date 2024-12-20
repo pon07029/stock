@@ -30,7 +30,7 @@ export default function Home() {
       <div className="mt-4 space-y-4 w-full">
         {data &&
           data.map((ele, i) => (
-            <StockBox key={i} score={[1, 1, 1, 1]} ticker={ele.ticker} />
+            <StockBox key={i} data={ele} />
           ))}
       </div>
     </div>
